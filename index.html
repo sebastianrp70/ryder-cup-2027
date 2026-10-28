@@ -68,6 +68,7 @@ header{min-height:clamp(380px,62vw,620px)!important}
 }
 
 .who{display:flex;align-items:center;gap:10px;font-weight:600}
+.idx{flex:none;min-width:22px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500;color:var(--muted)}
 .av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--beige);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:.02em}
 .pip{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:600;background:var(--surface);border:1.5px solid #dcdbd3;color:var(--muted)}
 .pip.paid{background:var(--olive);border-color:var(--olive);color:var(--olive-ink)}
@@ -199,8 +200,8 @@ footer{font-size:13px;color:var(--muted);text-align:center}
   // Scorecard
   const chip = {ok:['ok','Al día'],behind:['bad','Atrasado'],pending:['wait','Pendiente'],unconfirmed:['bad','Sin confirmar'],out:['out','Fuera']};
   let h = '<thead><tr><th>Jugador</th>' + slots.map(s => { const now = s.key===curKey, past = today > s.due; const [a,b] = s.key==='topup' ? ['+'+Math.round(s.amount),'ajuste'] : [s.label.split(' ')[0], s.label.split(' ')[1]]; return `<th class="m"><span class="mb ${now?'now':past?'past':''}"><b>${a.toUpperCase()}</b>${b}</span></th>`; }).join('') + '<th class="r">Pagado</th><th class="r">Falta</th><th>Estado</th></tr></thead><tbody>';
-  rows.forEach(r => {
-    h += `<tr><td><span class="who">${esc(r.p.name)}</span></td>` + r.cells.map((c,i) => {
+  rows.forEach((r, n) => {
+    h += `<tr><td><span class="who"><span class="idx">${n + 1}</span>${esc(r.p.name)}</span></td>` + r.cells.map((c,i) => {
       const txt = c.got ? (c.got === slots[i].amount ? c.got : c.got.toFixed(c.got%1?2:0)) : (c.state === 'late' ? '0' : '·');
       return `<td class="cell"><span class="pip ${c.state==='none'?'':c.state}" title="${slots[i].label}: ${eur(c.got)} de ${eur(slots[i].amount)}">${txt}</span></td>`;
     }).join('') + `<td class="r num">${eur(r.paid)}</td><td class="r num">${r.credit ? '+' + eur(r.credit) : eur(r.owed)}</td><td><span class="chip ${chip[r.status][0]}">${chip[r.status][1]}</span></td></tr>`;
